@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const List  = require("../models/item");
 const CustomList = require("../models/list");
+const _ = require("lodash");
 
 router.post("/", (req, res)=>{
     const delItemId = req.body.deleteCheckBox;
@@ -17,7 +18,7 @@ router.post("/", (req, res)=>{
 	} else {
 		CustomList.findOneAndUpdate({name: listName},{$pull: {items: {_id: delItemId}}} , (err, result) => {
 			if(!err){
-				res.redirect("/new/" + listName);
+				res.redirect("/" + _.lowerCase(listName));
 			}
 		});
 	}

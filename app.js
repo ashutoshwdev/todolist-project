@@ -8,7 +8,6 @@ const mongoose = require("mongoose");
 /************************** Paths for routes defined below *******************************/
 const indexPath = require("./routes/index");
 const deletePath = require("./routes/delete");
-const customListPath = require("./routes/customlist");
 
 
 
@@ -21,7 +20,6 @@ mongoose.connect(process.env.MY_DB_ADDR); //Connecting to database
 /************************** ROUTES *******************************/
 app.use('/', indexPath);
 app.use('/delete', deletePath);
-app.use("/new", customListPath);
 
 
 /************************** Server port *******************************/

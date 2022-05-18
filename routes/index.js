@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const List  = require("../models/item");
 const CustomList = require("../models/list");
+const _ = require("lodash");
 
 // Documents to insert default items inside database
 const item1 = new List({
@@ -20,16 +21,10 @@ router.get("/", (req,res)=>{
     // Fetching default items
 	List.find({}, function(err, foundItems){
 		if(foundItems.length === 0){
-			List.insertMany(defaultItems, function(err){
-				if(err){
-					console.log("Default Items not inserted");
-				} else{
-					console.log("Default items inserted");
-				}
-			});
+			List.insertMany(defaultItems);
 			res.redirect("/");
 		} else{
-			res.render("index", {listTitle: "Today", addedItems: foundItems });
+			res.render("index", {listTitle: "Today", addedItems: foundItems});
 		}
 	});
 });
@@ -49,9 +44,25 @@ router.post("/", (req, res)=>{
 		CustomList.findOne({name: listName}, (err, foundList) => {
 			foundList.items.push(item);
 			foundList.save();
-			res.redirect("/new/" + listName);
+			res.redirect("/" + _.lowerCase(listName));
 		});
 	}
+});
+
+router.get("/:customRoute", (req, res) => {
+    const customListName = _.capitalize(req.params.customRoute);
+	CustomList.findOne({name: customListName}, (err, result) => {
+		if(!result){
+			const list1 = new CustomList({
+				name: customListName,
+				items: defaultItems
+			});
+			list1.save();
+			res.redirect("/" + _.lowerCase(req.params.customRoute));
+		} else {
+			res.render("index", {listTitle: result.name, addedItems: result.items });
+		}
+    });
 });
 
 
